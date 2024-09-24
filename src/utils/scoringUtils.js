@@ -1,59 +1,30 @@
-export function calculateScore(questions, userAnswers) {
-  console.log("Calculating score with:", { questions: questions.length, userAnswers: Object.keys(userAnswers).length });
-  let correctAnswers = 0;
-  let totalQuestions = questions.length;
-  let weightedScore = 0;
+export const calculateScore = (questions, userAnswers) => {
+  let totalScore = 0;
+  let totalWeight = 0;
 
   questions.forEach(question => {
-    const isCorrect = isAnswerCorrect(question, userAnswers[question.id]);
-    console.log(`Question ${question.id}: User Answer: ${userAnswers[question.id]}, Correct: ${isCorrect}`);
-    if (isCorrect) {
-      correctAnswers++;
-      weightedScore += question.difficulty || 1;
+    const weight = question.difficulty === 'easy' ? 1 : question.difficulty === 'medium' ? 2 : 3;
+    totalWeight += weight;
+
+    if (isAnswerCorrect(question, userAnswers[question.id])) {
+      totalScore += weight;
     }
   });
 
-  const percentageScore = (correctAnswers / totalQuestions) * 100;
-  const weightedPercentage = (weightedScore / (totalQuestions * 1.5)) * 100;
+  return (totalScore / totalWeight) * 100;
+};
 
-  const score = {
-    correctAnswers,
-    totalQuestions,
-    percentageScore,
-    weightedPercentage,
-    certificationLevel: getCertificationLevel(percentageScore, weightedPercentage)
-  };
-
-  console.log("Calculated score:", score);
-  return score;
-}
-
-function isAnswerCorrect(question, userAnswer) {
-  if (!userAnswer) return false;
-  
-  switch (question.type) {
-    case 'single':
-      return userAnswer === question.correctAnswer;
-    case 'multiple':
-      return arraysEqual(userAnswer, question.correctAnswer);
-    case 'boolean':
-      return userAnswer === question.correctAnswer;
-    default:
-      return false;
+const isAnswerCorrect = (question, userAnswer) => {
+  if (question.type === 'multiple') {
+    return arraysEqual(question.correctAnswer.sort(), userAnswer.sort());
   }
-}
+  return question.correctAnswer === userAnswer;
+};
 
-function arraysEqual(a, b) {
+const arraysEqual = (a, b) => {
   if (a.length !== b.length) return false;
-  return a.every((val, index) => val === b[index]);
-}
-
-function getCertificationLevel(percentageScore, weightedPercentage) {
-  if (percentageScore >= 85 && weightedPercentage >= 80) {
-    return "Expert Developer";
-  } else if (percentageScore >= 70 && weightedPercentage >= 65) {
-    return "Advanced Developer";
-  } else {
-    return "Not Certified";
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] !== b[i]) return false;
   }
-}
+  return true;
+};
