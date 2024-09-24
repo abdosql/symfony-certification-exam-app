@@ -1,0 +1,112 @@
+Prompt for Generating Symfony Questions
+Please generate a set of multiple-choice and true/false questions based on the Symfony official documentation. The questions should cover various topics such as Symfony Fundamentals, Routing, Controllers, Templating with Twig, Forms, Data Validation, Dependency Injection, Security, HTTP Caching, Console, Automated Tests, and Miscellaneous topics. Each question should include the following fields:
+
+1. `id`: A unique identifier for the question.
+2. `text`: The text of the question.
+3. `type`: The type of question (e.g., "single" for single-choice, "multiple" for multiple-choice, "boolean" for true/false).
+4. `options`: An array of possible answer options (for multiple-choice and single-choice questions).
+5. `correctAnswer`: The correct answer(s) for the question. For multiple-choice questions, this should be an array of correct options.
+6. `explanation`: An explanation of the correct answer.
+
+Here is an example of the JSON structure for the questions:
+
+json
+{
+"SymfonyFundamentals": [
+{
+"id": "sf1",
+"text": "What is Symfony Flex and what is its primary purpose?",
+"type": "single",
+"options": [
+"A templating engine for Symfony applications",
+"A tool to automate the installation and configuration of Symfony bundles",
+"A security component for Symfony",
+"A debugging tool for Symfony developers"
+],
+"correctAnswer": "A tool to automate the installation and configuration of Symfony bundles",
+"explanation": "Symfony Flex is a composer plugin that automates the installation and configuration of Symfony bundles, making it easier to manage dependencies and setup in Symfony projects."
+},
+{
+"id": "sf2",
+"text": "Which Symfony component is responsible for handling the event system?",
+"type": "single",
+"options": [
+"HttpKernel",
+"EventDispatcher",
+"Routing",
+"Security"
+],
+"correctAnswer": "EventDispatcher",
+"explanation": "The EventDispatcher component manages the event system in Symfony, allowing different parts of the application to communicate through events and listeners."
+}
+],
+"Routing": [
+{
+"id": "route1",
+"text": "In Symfony, which annotation is used to define a route in a controller using attributes?",
+"type": "single",
+"options": [
+"@Route",
+"#[Route]",
+"/Route",
+"Route()"
+],
+"correctAnswer": "#[Route]",
+"explanation": "In Symfony, attributes are used to define routes with the #[Route] syntax, which is a native PHP 8+ feature replacing annotations."
+},
+{
+"id": "route2",
+"text": "Which file format can be used to configure routes in Symfony?",
+"type": "multiple",
+"options": [
+"YAML",
+"XML",
+"PHP",
+"JSON"
+],
+"correctAnswer": ["YAML", "PHP", "XML"],
+"explanation": "Symfony supports multiple formats for route configuration, including YAML, PHP, and XML. JSON is not a standard format for Symfony routing configuration."
+}
+],
+"Controllers": [
+{
+"id": "ctrl1",
+"text": "Which base class is commonly extended when creating controllers in Symfony?",
+"type": "single",
+"options": [
+"Controller",
+"AbstractController",
+"BaseController",
+"SymfonyController"
+],
+"correctAnswer": "AbstractController",
+"explanation": "AbstractController provides a base implementation for controllers in Symfony, offering useful helper methods and services that simplify common tasks."
+},
+{
+"id": "ctrl2",
+"text": "How can you add a flash message in a Symfony controller?",
+"type": "single",
+"options": [
+"$this->addFlash('notice', 'Message')",
+"flash('notice', 'Message')",
+"$this->getFlashBag()->add('notice', 'Message')",
+"Both A and C"
+],
+"correctAnswer": "Both A and C",
+"explanation": "Both $this->addFlash('notice', 'Message') and $this->getFlashBag()->add('notice', 'Message') are valid ways to add flash messages in Symfony controllers."
+}
+]
+}
+
+Please generate a comprehensive set of questions covering the mentioned topics.
+
+
+
+
+
+How to Use the Prompt
+Copy the Prompt: Copy the entire prompt text provided above.
+Paste into AI Tool: Paste the prompt into the AI tool or platform you are using to generate the questions.
+3. Review and Adjust: Review the generated questions to ensure they are accurate and relevant. Adjust any questions as needed to better fit your requirements.
+4. Save as JSON: Save the generated questions in a JSON file format, ensuring the structure matches the example provided.
+This prompt should help you generate a comprehensive set of questions based on the Symfony official documentation, which you can then upload using the QuestionUploader component in your application.
