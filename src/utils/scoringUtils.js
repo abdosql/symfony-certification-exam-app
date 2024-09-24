@@ -1,30 +1,62 @@
-export const calculateScore = (questions, userAnswers) => {
-  let totalScore = 0;
+export function calculateScore(questions, userAnswers) {
+  let correctAnswers = 0;
   let totalWeight = 0;
+  let weightedCorrectAnswers = 0;
 
-  questions.forEach(question => {
-    const weight = question.difficulty === 'easy' ? 1 : question.difficulty === 'medium' ? 2 : 3;
+  questions.forEach((question, index) => {
+    const userAnswer = userAnswers[question.id];
+    const weight = getQuestionWeight(question.difficulty);
     totalWeight += weight;
 
-    if (isAnswerCorrect(question, userAnswers[question.id])) {
-      totalScore += weight;
+    if (isAnswerCorrect(question, userAnswer)) {
+      correctAnswers++;
+      weightedCorrectAnswers += weight;
     }
   });
 
-  return (totalScore / totalWeight) * 100;
-};
+  const totalQuestions = questions.length;
+  const percentageScore = (correctAnswers / totalQuestions) * 100;
+  const weightedPercentage = (weightedCorrectAnswers / totalWeight) * 100;
 
-const isAnswerCorrect = (question, userAnswer) => {
+  const certificationLevel = getCertificationLevel(percentageScore, weightedPercentage);
+
+  return {
+    correctAnswers,
+    totalQuestions,
+    percentageScore,
+    weightedPercentage,
+    certificationLevel
+  };
+}
+
+function isAnswerCorrect(question, userAnswer) {
   if (question.type === 'multiple') {
-    return arraysEqual(question.correctAnswer.sort(), userAnswer.sort());
+    if (!Array.isArray(userAnswer) || !Array.isArray(question.correctAnswer)) {
+      return false;
+    }
+    const sortedUserAnswer = [...userAnswer].sort();
+    const sortedCorrectAnswer = [...question.correctAnswer].sort();
+    return JSON.stringify(sortedUserAnswer) === JSON.stringify(sortedCorrectAnswer);
+  } else {
+    return userAnswer === question.correctAnswer;
   }
-  return question.correctAnswer === userAnswer;
-};
+}
 
-const arraysEqual = (a, b) => {
-  if (a.length !== b.length) return false;
-  for (let i = 0; i < a.length; i++) {
-    if (a[i] !== b[i]) return false;
+function getQuestionWeight(difficulty) {
+  switch (difficulty) {
+    case 'easy': return 1;
+    case 'medium': return 2;
+    case 'hard': return 3;
+    default: return 1;
   }
-  return true;
-};
+}
+
+function getCertificationLevel(percentageScore, weightedPercentage) {
+  if (percentageScore >= 85 && weightedPercentage >= 80) {
+    return 'Expert Developer';
+  } else if (percentageScore >= 70 && weightedPercentage >= 65) {
+    return 'Advanced Developer';
+  } else {
+    return 'Not Certified';
+  }
+}

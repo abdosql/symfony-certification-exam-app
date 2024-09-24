@@ -71,10 +71,17 @@ function ExamSimulator() {
     try {
       setExamFinished(true);
       console.log("User Answers:", userAnswers);
+      
+      if (!state.currentExam || !state.currentExam.questions) {
+        throw new Error("Exam data is missing or invalid");
+      }
+      
       const score = calculateScore(state.currentExam.questions, userAnswers);
       console.log("Score calculated:", score);
+      
       const participant = { ...userInfo, score };
       console.log("Participant data:", participant);
+      
       dispatch({ type: 'END_EXAM', payload: { questions: state.currentExam.questions, userAnswers, score, participant } });
       console.log("Dispatched END_EXAM action");
 
@@ -108,6 +115,7 @@ function ExamSimulator() {
 
     } catch (error) {
       console.error("Error in handleFinishExam:", error);
+      setError(error.message);
     }
   }, [state.currentExam, userAnswers, dispatch, navigate, userInfo]);
 
