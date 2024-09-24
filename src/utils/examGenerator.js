@@ -32,33 +32,26 @@ export async function generateExam() {
           console.warn(`Not enough questions available. Using all ${totalAvailableQuestions} questions.`);
         }
 
-        topics.forEach((topic, index) => {
-          console.log(`Processing topic ${index + 1}/${topics.length}: ${topic}`);
+        topics.forEach((topic) => {
           const topicQuestions = questionBank[topic];
           if (!topicQuestions || topicQuestions.length === 0) {
             throw new Error(`No questions found for topic: ${topic}`);
           }
-          console.log(`Selecting questions for topic: ${topic}`);
           const selectedQuestions = selectRandomQuestions(topicQuestions, Math.min(QUESTIONS_PER_TOPIC, topicQuestions.length));
-          exam.questions.push(...selectedQuestions);
+          exam.questions.push(...selectedQuestions.map(q => ({ ...q, topic })));
         });
 
-        console.log(`Selected ${exam.questions.length} questions. Adding remaining questions if needed...`);
         // If we have any remaining questions to reach TOTAL_QUESTIONS, add them randomly
-        let attempts = 0;
-        while (exam.questions.length < Math.min(TOTAL_QUESTIONS, totalAvailableQuestions) && attempts < 1000) {
+        while (exam.questions.length < Math.min(TOTAL_QUESTIONS, totalAvailableQuestions)) {
           const randomTopic = topics[Math.floor(Math.random() * topics.length)];
           const randomQuestion = selectRandomQuestions(questionBank[randomTopic], 1)[0];
           if (!exam.questions.some(q => q.id === randomQuestion.id)) {
-            exam.questions.push(randomQuestion);
+            exam.questions.push({ ...randomQuestion, topic: randomTopic });
           }
-          attempts++;
         }
 
-        console.log(`Total questions in exam: ${exam.questions.length}`);
-
-        // Shuffle the questions within each topic
-        exam.questions = shuffleArrayByTopic(exam.questions);
+        // Shuffle the questions
+        exam.questions = shuffleArray(exam.questions);
 
         console.log("Exam generated successfully");
         resolve(exam);
@@ -66,16 +59,13 @@ export async function generateExam() {
         console.error("Error in generateExam:", error);
         reject(error);
       }
-    }, 0); // Use setTimeout to prevent blocking the main thread
+    }, 0);
   });
 }
 
 function selectRandomQuestions(questions, count) {
-  if (!questions || questions.length === 0) {
-    throw new Error('No questions available to select from');
-  }
   const shuffled = shuffleArray(questions);
-  return shuffled.slice(0, Math.min(count, shuffled.length));
+  return shuffled.slice(0, count);
 }
 
 function shuffleArray(array) {
@@ -87,20 +77,4 @@ function shuffleArray(array) {
   return newArray;
 }
 
-function shuffleArrayByTopic(array) {
-  const topics = [...new Set(array.map(q => q.topic))];
-  const shuffledArray = [];
-  topics.forEach(topic => {
-    const topicQuestions = array.filter(q => q.topic === topic);
-    shuffledArray.push(...shuffleArray(topicQuestions));
-  });
-  return shuffledArray;
-}
-
-function selectQuestions(totalQuestions) {
-  const allQuestions = Object.values(questionBank).flat();
-  const shuffledQuestions = shuffleArray(allQuestions);
-  return shuffledQuestions.slice(0, totalQuestions);
-}
-
-export { selectQuestions };
+export { selectRandomQuestions };
