@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import './Participants.css'; // We'll create this file for styles
 
 function Participants() {
   const [participants, setParticipants] = useState([]);
@@ -69,63 +70,68 @@ function Participants() {
   };
 
   if (loading) {
-    return <div>Loading participants...</div>;
+    return <div className="loading">Loading participants...</div>;
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div className="error">Error: {error}</div>;
   }
 
   return (
-    <div className="participants">
-      <h2>Participants and Results</h2>
+    <div className="participants-container">
+      <h2 className="participants-title">Participants and Results</h2>
       {participants.length === 0 ? (
-        <p>No participants yet.</p>
+        <p className="no-participants">No participants yet.</p>
       ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Correct Answers</th>
-              <th>Total Questions</th>
-              <th>Percentage Score</th>
-              <th>Weighted Score</th>
-              <th>Certification Level</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {participants.map((exam, index) => (
-              <tr key={index}>
-                <td>{exam.participant.name}</td>
-                <td>{exam.participant.email}</td>
-                <td>{exam.participant.score.correctAnswers}</td>
-                <td>{exam.participant.score.totalQuestions}</td>
-                <td>{exam.participant.score.percentageScore.toFixed(2)}%</td>
-                <td>{exam.participant.score.weightedPercentage.toFixed(2)}%</td>
-                <td>{exam.participant.score.certificationLevel}</td>
-                <td>
-                  <button onClick={() => handleDelete(exam)}>Delete</button>
-                </td>
+        <div className="table-container">
+          <table className="participants-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Correct Answers</th>
+                <th>Total Questions</th>
+                <th>Percentage Score</th>
+                <th>Weighted Score</th>
+                <th>Certification Level</th>
+                <th>Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {participants.map((exam, index) => (
+                <tr key={index}>
+                  <td>{exam.participant.name}</td>
+                  <td>{exam.participant.email}</td>
+                  <td>{exam.participant.score.correctAnswers}</td>
+                  <td>{exam.participant.score.totalQuestions}</td>
+                  <td>{exam.participant.score.percentageScore.toFixed(2)}%</td>
+                  <td>{exam.participant.score.weightedPercentage.toFixed(2)}%</td>
+                  <td>{exam.participant.score.certificationLevel}</td>
+                  <td>
+                    <button className="delete-btn" onClick={() => handleDelete(exam)}>Delete</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
 
       {showModal && (
-        <div className="modal">
-          <div className="modal-content">
-            <h3>Enter Admin Password</h3>
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3 className="modal-title">Enter Admin Password</h3>
             <input
               type="password"
               value={adminPassword}
               onChange={(e) => setAdminPassword(e.target.value)}
               placeholder="Admin Password"
+              className="admin-password-input"
             />
-            <button onClick={confirmDelete}>Confirm Delete</button>
-            <button onClick={() => setShowModal(false)}>Cancel</button>
+            <div className="modal-buttons">
+              <button className="confirm-btn" onClick={confirmDelete}>Confirm Delete</button>
+              <button className="cancel-btn" onClick={() => setShowModal(false)}>Cancel</button>
+            </div>
           </div>
         </div>
       )}
