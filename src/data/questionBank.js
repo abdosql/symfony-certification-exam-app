@@ -509,12 +509,12 @@ const questionBank = {
       text: 'What is the purpose of PHP extensions?',
       type: 'single',
       options: [
-        'To enhance PHP's functionality by adding new features.',
+        'To enhance PHP\'s functionality by adding new features.',
         'To manage database connections.',
         'To handle HTTP requests.',
         'To define routing rules.'
       ],
-      correctAnswer: 'To enhance PHP's functionality by adding new features.',
+      correctAnswer: 'To enhance PHP\'s functionality by adding new features.',
       explanation: 'PHP extensions provide additional functionalities to PHP, allowing developers to leverage extended libraries and features beyond the core language.',
       difficulty: 'easy'
     },
