@@ -1,7 +1,7 @@
 const fs = require('fs').promises;
 const path = require('path');
 
-const resultsFilePath = path.join(process.cwd(), 'exam_results.json');
+const resultsFilePath = path.join('/tmp', 'exam_results.json');
 
 module.exports = async (req, res) => {
   if (req.method === 'POST') {
