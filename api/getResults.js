@@ -1,13 +1,21 @@
-const { kv } = require('@vercel/kv');
+const fs = require('fs').promises;
+const path = require('path');
+
+const resultsFilePath = path.join('/tmp', 'exam_results.json');
 
 module.exports = async (req, res) => {
   if (req.method === 'GET') {
     try {
-      const results = await kv.get('exam_results') || [];
+      const data = await fs.readFile(resultsFilePath, 'utf8');
+      const results = JSON.parse(data);
       res.status(200).json(results);
     } catch (error) {
-      console.error('Error reading results:', error);
-      res.status(500).json({ error: 'Failed to read results' });
+      if (error.code === 'ENOENT') {
+        res.status(200).json([]);
+      } else {
+        console.error('Error reading results:', error);
+        res.status(500).json({ error: 'Failed to read results' });
+      }
     }
   } else {
     res.setHeader('Allow', ['GET']);

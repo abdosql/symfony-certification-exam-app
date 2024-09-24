@@ -7,14 +7,23 @@ function Participants() {
 
   useEffect(() => {
     fetch('/api/getResults')
-      .then(response => response.json())
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
       .then(data => {
-        setParticipants(data);
+        if (Array.isArray(data)) {
+          setParticipants(data);
+        } else {
+          setError('Received unexpected data format');
+        }
         setLoading(false);
       })
       .catch(error => {
         console.error('Error fetching results:', error);
-        setError('Failed to load participants');
+        setError('Failed to load participants: ' + error.message);
         setLoading(false);
       });
   }, []);
@@ -24,7 +33,7 @@ function Participants() {
   }
 
   if (error) {
-    return <div>{error}</div>;
+    return <div>Error: {error}</div>;
   }
 
   return (
