@@ -1,26 +1,19 @@
-const fs = require('fs').promises;
-const path = require('path');
-
-const resultsFilePath = path.join('/tmp', 'exam_results.json');
+const { kv } = require('@vercel/kv');
 
 module.exports = async (req, res) => {
   if (req.method === 'POST') {
     try {
       const newResult = req.body;
-      let results = [];
-
-      try {
-        const data = await fs.readFile(resultsFilePath, 'utf8');
-        results = JSON.parse(data);
-      } catch (error) {
-        if (error.code !== 'ENOENT') {
-          throw error;
-        }
-      }
-
+      
+      // Get existing results
+      let results = await kv.get('exam_results') || [];
+      
+      // Add new result
       results.push(newResult);
-
-      await fs.writeFile(resultsFilePath, JSON.stringify(results, null, 2), 'utf8');
+      
+      // Save updated results
+      await kv.set('exam_results', results);
+      
       res.status(200).json({ message: 'Results saved successfully' });
     } catch (error) {
       console.error('Error saving results:', error);
